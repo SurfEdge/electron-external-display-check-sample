@@ -1,5 +1,5 @@
 // Modules to control application life and create native browser window
-const {app, BrowserWindow} = require('electron')
+const {app, BrowserWindow, screen, dialog} = require('electron')
 const path = require('path')
 
 function createWindow () {
@@ -24,6 +24,34 @@ function createWindow () {
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
   createWindow()
+
+
+  // https://www.electronjs.org/docs/api/screen More info here
+  let displays = screen.getAllDisplays();
+  console.log(displays)
+
+  let externalDisplay = displays.find((display) => {
+    return display.bounds.x !== 0 || display.bounds.y !== 0
+  })
+
+  console.log(externalDisplay)
+
+  if (externalDisplay) {
+    const options = {
+      type: 'info',
+      buttons: [ 'Okay'],
+      defaultId: 2,
+      title: 'Message',
+      message: 'External Display Detected!',
+      detail: 'Now we can do some action here!',
+    };
+  
+    dialog.showMessageBox(null, options, (response, checkboxChecked) => {
+      console.log(response);
+      console.log(checkboxChecked);
+    });
+  }
+
   
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the
